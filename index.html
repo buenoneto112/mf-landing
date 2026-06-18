@@ -1,0 +1,2362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="MetaFácil — CRM para lojas físicas. Conheça seus clientes de verdade, traga quem sumiu de volta e gere recompra ativa."/>
+  <title>MetaFácil — CRM para Lojas Físicas</title>
+  <style>
+    /* ── Variables ──────────────────────────────── */
+    :root {
+      --bg:      #0B1020;
+      --bg2:     #0F172A;
+      --card:    #111827;
+      --border:  #1E2D45;
+      --purple:  #7C5CFF;
+      --purple-h:#8F7BFF;
+      --green:   #22C55E;
+      --red:     #F87171;
+      --text:    #FFFFFF;
+      --text2:   #D1D6F0;
+      --muted:   #6B7280;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ─────────────────────────────────── */
+    .inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-left: clamp(16px, 4vw, 40px);
+      padding-right: clamp(16px, 4vw, 40px);
+    }
+    .inner-sm {
+      width: 100%;
+      max-width: 1024px;
+      margin: 0 auto;
+      padding-left: clamp(16px, 4vw, 40px);
+      padding-right: clamp(16px, 4vw, 40px);
+    }
+
+    /* ── Typography ─────────────────────────────── */
+    .hero-title {
+      font-size: clamp(2.8rem, 6.15vw, 5.5rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    .section-title-sm {
+      font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+    }
+
+    /* ── Gradient text ──────────────────────────── */
+    .g-purple {
+      background: linear-gradient(135deg, #7C5CFF 0%, #A78BFA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .g-green {
+      background: linear-gradient(135deg, #22C55E 0%, #4ADE80 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Animated grid ──────────────────────────── */
+    .grid-bg { position: relative; overflow: hidden; }
+    .grid-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,92,255,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,255,0.07) 1px, transparent 1px);
+      background-size: 56px 56px;
+      animation: gridDrift 12s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes gridDrift {
+      0%   { transform: translate(0, 0); }
+      100% { transform: translate(56px, 56px); }
+    }
+
+    /* ── Sparkles ───────────────────────────────── */
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+      40%, 60% { opacity: 1; transform: scale(1) rotate(180deg); }
+    }
+    .sparkle-dot {
+      position: absolute;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      animation: sparkle var(--dur, 3s) var(--delay, 0s) ease-in-out infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── Buttons ────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      background: var(--purple); color: #fff;
+      border-radius: 12px; font-weight: 600; font-size: 0.95rem;
+      letter-spacing: -0.01em; border: none; cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn-primary:hover {
+      background: var(--purple-h);
+      box-shadow: 0 8px 32px rgba(124,92,255,0.45);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; color: var(--text2);
+      border-radius: 12px; font-weight: 500; font-size: 0.95rem;
+      border: 1.5px solid rgba(124,92,255,0.35);
+      cursor: pointer; transition: all 0.25s ease;
+      text-decoration: none; background: transparent; white-space: nowrap;
+    }
+    .btn-ghost:hover {
+      border-color: var(--purple); color: #fff;
+      background: rgba(124,92,255,0.08);
+    }
+    .btn-nav {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border-radius: 10px;
+      font-size: 0.85rem; font-weight: 500;
+      text-decoration: none;
+      border: 1.5px solid rgba(124,92,255,0.35);
+      color: var(--text2); background: transparent;
+      cursor: pointer; transition: all 0.25s ease; white-space: nowrap;
+    }
+    .btn-nav:hover { border-color: var(--purple); color: #fff; background: rgba(124,92,255,0.08); }
+    .btn-app {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #000; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px; padding: 9px 18px;
+      text-decoration: none; color: #fff; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-app:hover { border-color: rgba(255,255,255,0.3); }
+    .btn-app-sm { font-size: 0.6rem; opacity: 0.7; letter-spacing: 0.05em; line-height: 1.2; }
+    .btn-app-lg { font-size: 0.85rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+
+    /* ── Tag ────────────────────────────────────── */
+    .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 99px;
+      border: 1px solid rgba(124,92,255,0.3);
+      background: rgba(124,92,255,0.08);
+      color: #A78BFA; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .tag-green {
+      border-color: rgba(34,197,94,0.3);
+      background: rgba(34,197,94,0.08);
+      color: #4ADE80;
+    }
+    .tag-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22C55E; display: inline-block;
+      animation: sparkle 2s ease-in-out infinite;
+    }
+
+    /* ── Cards ──────────────────────────────────── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: transform 0.8s cubic-bezier(.165,.84,.44,1), border-color 0.3s, box-shadow 0.5s;
+    }
+    .card:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(124,92,255,0.4);
+      box-shadow: 0 0 25px -5px rgba(124,92,255,0.5);
+    }
+    .bento-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      transition: transform 1s cubic-bezier(.165,.84,.44,1), border-color 0.4s, box-shadow 0.5s;
+      cursor: default;
+    }
+    .bento-card:hover {
+      transform: scale(1.02);
+      border-color: rgba(124,92,255,0.45);
+      box-shadow: 0 0 25px -5px rgba(124,92,255,0.5), 0 24px 48px rgba(0,0,0,0.4);
+    }
+    .bento-7 { grid-column: span 7; }
+    .bento-5 { grid-column: span 5; }
+    .bento-4 { grid-column: span 4; }
+    .bento-12 { grid-column: 1 / -1; }
+    @media (max-width: 900px) {
+      .bento-7, .bento-5, .bento-4 { grid-column: 1 / -1; }
+    }
+
+    /* ── Divider ────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,92,255,0.2), transparent);
+      max-width: 800px; margin: 0 auto;
+    }
+
+    /* ── Float ──────────────────────────────────── */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50%       { transform: translateY(-14px) rotate(-1deg); }
+    }
+    .float { animation: float 6s ease-in-out infinite; }
+
+    /* ── Word reveal ────────────────────────────── */
+    @keyframes wordIn {
+      from { opacity: 0; transform: translateY(36px); filter: blur(12px); }
+      to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    .word {
+      display: inline-block; margin-right: 0.22em; opacity: 0;
+      animation: wordIn 0.65s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+      animation-delay: calc(0.1s + var(--i) * 0.09s);
+    }
+
+    /* ── Fade-up ────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+      animation-delay: var(--d, 0s);
+    }
+
+    /* ── Scroll reveals ─────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-left {
+      opacity: 0; transform: translateX(-50px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-left.visible { opacity: 1; transform: none; }
+    .reveal-right {
+      opacity: 0; transform: translateX(50px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-right.visible { opacity: 1; transform: none; }
+
+    /* ── Marquee ────────────────────────────────── */
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-33.333%); }
+    }
+    .marquee-wrap {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+    }
+    .marquee-track {
+      display: flex; gap: 14px; width: max-content;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+
+    /* ── Scrollbar ──────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(124,92,255,0.35); border-radius: 3px; }
+
+    /* ── Reduced motion ─────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+
+    /* ════════ NAV ════════════════════════════════ */
+    .nav {
+      position: fixed; inset: 0 0 auto; z-index: 200;
+      height: 64px;
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+    }
+    .nav.scrolled {
+      background: rgba(11,16,32,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-color: rgba(35,43,69,0.5);
+    }
+    .nav-inner {
+      height: 64px; display: flex;
+      align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .nav-logo {
+      font-size: 1.3rem; font-weight: 700; letter-spacing: -0.03em;
+      color: #fff; text-decoration: none; flex-shrink: 0;
+    }
+    .nav-logo img { height: 40px; width: auto; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.875rem; color: #9AA1C4; text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta { display: flex; align-items: center; gap: 0.75rem; }
+    @media (max-width: 768px) { .nav-links, .btn-nav { display: none; } }
+
+
+    /* ════════ HERO ═══════════════════════════════ */
+    .hero { min-height: 100svh; background: var(--bg); display: flex; flex-direction: column; justify-content: center; }
+    .hero-inner {
+      display: flex; flex-direction: row; align-items: center;
+      gap: clamp(2rem, 5vw, 4rem);
+      padding-top: clamp(100px, 14vh, 140px);
+      padding-bottom: clamp(60px, 10vh, 100px);
+    }
+    .hero-left { flex: 1; min-width: 0; }
+    .hero-right { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; max-width: 580px; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: 0; }
+    .orb-purple { top: -10%; left: 30%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,92,255,0.18) 0%, transparent 70%); }
+    .orb-green  { bottom: 5%; right: 10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(34,197,94,0.1) 0%, transparent 70%); filter: blur(70px); }
+    .hero-tag { margin-bottom: 1.5rem; }
+    .hero-h1 { margin-bottom: 0.3rem; }
+    .hero-h1-line { display: block; }
+    .hero-rotating-wrap { margin-bottom: 1.5rem; min-height: 1.15em; }
+    .hero-rotating {
+      font-size: clamp(2.8rem, 6.15vw, 5.5rem); font-weight: 700;
+      letter-spacing: -0.04em; line-height: 1.05; display: inline-block;
+      transition: opacity 0.34s ease, transform 0.34s ease;
+    }
+    .hero-sub { font-size: 1.1rem; line-height: 1.7; color: #9AA1C4; max-width: 480px; margin-bottom: 2rem; }
+    .hero-sub strong { color: var(--text2); font-weight: 500; }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 2.5rem; }
+    .hero-trust { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+    .trust-item { display: flex; align-items: center; gap: 6px; }
+    .trust-val { color: #22C55E; font-weight: 700; font-size: 0.9rem; }
+    .trust-lbl { color: #6B7280; font-size: 0.8rem; }
+    .hero-img-wrap { position: relative; width: 100%; }
+    .hero-img-glow {
+      position: absolute; width: 80%; height: 70%; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(124,92,255,0.25) 0%, transparent 70%);
+      filter: blur(50px); border-radius: 50%; pointer-events: none;
+    }
+    .hero-img-inner { position: relative; }
+    .hero-img {
+      width: 100%; height: auto; border-radius: 16px; display: block;
+      border: 1px solid rgba(124,92,255,0.3);
+      box-shadow: 0 0 25px -5px rgba(124,92,255,0.5), 0 40px 80px rgba(0,0,0,0.6);
+    }
+    .float-badge {
+      position: absolute; background: #111827; border-radius: 12px;
+      padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+      backdrop-filter: blur(12px); z-index: 3;
+    }
+    .float-badge-top { top: -14px; right: 16px; border: 1px solid rgba(124,92,255,0.4); box-shadow: 0 0 20px rgba(124,92,255,0.15); }
+    .float-badge-bot { bottom: -16px; left: 16px; border: 1px solid rgba(34,197,94,0.4); box-shadow: 0 0 20px rgba(34,197,94,0.15); }
+    .fb-label { font-size: 0.7rem; color: #6B7280; }
+    .fb-value { font-size: 0.9rem; font-weight: 700; }
+    .fb-value.purple { color: #A78BFA; }
+    .fb-value.green  { color: #22C55E; }
+    .hero-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: linear-gradient(to bottom, transparent, var(--bg)); pointer-events: none; }
+    @media (max-width: 900px) {
+      .hero-inner { flex-direction: column; text-align: center; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .hero-trust { justify-content: center; }
+      .hero-right { max-width: 100%; width: 100%; }
+      .float-badge { display: none; }
+    }
+
+
+    /* ════════ PROBLEMA ════════════════════════════ */
+    .section-pad { padding: clamp(64px, 10vw, 120px) 0; }
+    .section-header { text-align: center; margin-bottom: clamp(40px, 6vw, 64px); }
+    .section-header .tag { margin-bottom: 16px; display: inline-flex; }
+    .section-header .section-title { margin-top: 14px; }
+    .section-header p { color: var(--muted); margin-top: 14px; max-width: 540px; margin-left: auto; margin-right: auto; font-size: 1.05rem; }
+
+    .prob-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .prob-col { padding: clamp(22px, 3vw, 32px); }
+    .prob-col-head {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    }
+    .prob-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+    }
+    .prob-icon.red   { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.25); }
+    .prob-icon.green { background: rgba(34,197,94,0.12);   border: 1px solid rgba(34,197,94,0.25); }
+    .prob-icon-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .prob-icon-label.red   { color: #F87171; }
+    .prob-icon-label.green { color: #22C55E; }
+    .prob-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .prob-list li { display: flex; align-items: flex-start; gap: 10px; color: var(--text2); font-size: 0.9rem; line-height: 1.5; }
+    .prob-quote {
+      margin-top: 20px; padding: 8px 0 8px 14px;
+      border-left: 3px solid rgba(124,92,255,0.4);
+      font-style: italic; color: var(--muted); font-size: 0.85rem;
+    }
+
+
+    /* ════════ PILARES (bento) ═════════════════════ */
+    .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+    .bento-pad { padding: clamp(20px, 2.5vw, 28px); }
+    .bento-img-row { display: flex; gap: 8px; padding: 0 clamp(16px,2vw,24px) clamp(16px,2vw,24px); }
+    .bento-img-row img { width: 100%; height: auto; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); display: block; }
+    .bento-lead { color: var(--muted); font-size: 0.9rem; line-height: 1.65; max-width: 440px; margin-top: 10px; }
+    .bento-note {
+      margin-top: 12px; font-size: 0.75rem; color: rgba(107,114,128,0.7);
+      font-style: italic; border-left: 2px solid rgba(124,92,255,0.25); padding-left: 10px;
+    }
+    .feature-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 10px;
+      background: rgba(124,92,255,0.05); border: 1px solid rgba(124,92,255,0.15);
+    }
+    .feature-chip span { color: var(--purple); font-shrink: 0; }
+    .feature-chip p { color: var(--text2); font-size: 0.8rem; line-height: 1.4; }
+
+
+    /* ════════ WHATSAPP MOCK ═══════════════════════ */
+    /* ── App UI components ──────────────────────── */
+    .app-header-bar {
+      background: #111827; padding: 12px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .app-header-bar h3 { font-size: 0.9rem; font-weight: 700; letter-spacing: -0.02em; }
+    .app-header-bar p { font-size: 0.65rem; color: #6B7280; margin-top: 2px; }
+    .app-search {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 9px; padding: 6px 10px; margin-top: 8px;
+      font-size: 0.65rem; color: #6B7280; display: flex; align-items: center; gap: 6px;
+    }
+    .app-client-list {
+      background: #0B1020;
+      overflow: hidden;
+      flex: 1;
+    }
+    .app-client-card {
+      background: #111827; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 13px; padding: 11px;
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+    .app-client-card.active {
+      border-color: rgba(124,92,255,0.5);
+      box-shadow: 0 0 20px rgba(124,92,255,0.1);
+    }
+    .app-client-name-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    }
+    .app-avatar-sm {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(124,92,255,0.18); border: 1px solid rgba(124,92,255,0.3);
+      display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+    }
+    .app-name { font-size: 0.78rem; font-weight: 700; letter-spacing: -0.01em; }
+    .app-cashback-badge {
+      background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.4);
+      border-radius: 9px; padding: 7px 10px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 7px;
+    }
+    .app-cashback-label { font-size: 0.65rem; color: #22C55E; font-weight: 600; line-height: 1.3; }
+    .app-cashback-value { font-size: 0.82rem; color: #22C55E; font-weight: 700; white-space: nowrap; }
+    .app-actions { display: flex; gap: 5px; }
+    .app-phone-btn {
+      flex: 1; background: #22C55E; color: #fff; border: none; border-radius: 7px;
+      padding: 5px 7px; font-size: 0.6rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .app-expiry-btn {
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+      color: #F87171; border-radius: 7px; padding: 5px 7px;
+      font-size: 0.6rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 3px; white-space: nowrap;
+    }
+    .app-details-toggle {
+      text-align: center; font-size: 0.62rem; color: #7C5CFF;
+      padding: 6px 0 1px; cursor: pointer; font-weight: 500;
+    }
+    .app-details-panel {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.75s cubic-bezier(0.4,0,0.2,1);
+    }
+    .app-details-panel.open { max-height: 320px; }
+    .app-hist-title {
+      font-size: 0.65rem; font-weight: 700; color: var(--text2);
+      padding: 8px 0 5px; display: flex; align-items: center; gap: 5px;
+    }
+    .app-hist-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 6px;
+    }
+    .app-hist-box {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px; padding: 7px 9px;
+    }
+    .app-hist-box-lbl { font-size: 0.58rem; color: #6B7280; margin-bottom: 2px; }
+    .app-hist-box-val { font-size: 0.75rem; font-weight: 700; }
+    .app-hist-box-val.green { color: #22C55E; }
+    .app-hist-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 4px 0; border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.6rem;
+    }
+    .app-hist-row span:first-child { color: #6B7280; }
+    .app-hist-row span:last-child { color: var(--text2); font-weight: 600; }
+    .app-interests {
+      padding-top: 8px; margin-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .app-interests.show { opacity: 1; transform: none; }
+    .app-int-group { margin-bottom: 5px; }
+    .app-int-label {
+      font-size: 0.58rem; color: #6B7280; text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 3px; display: flex; align-items: center; gap: 4px;
+    }
+    .app-pills { display: flex; flex-wrap: wrap; gap: 3px; }
+    .app-pill {
+      padding: 2px 7px; border-radius: 99px; font-size: 0.6rem; font-weight: 600;
+    }
+    .app-pill.purple { background: rgba(124,92,255,0.15); border: 1px solid rgba(124,92,255,0.4); color: #A78BFA; }
+    .app-pill.green  { background: rgba(34,197,94,0.1);   border: 1px solid rgba(34,197,94,0.35);  color: #4ADE80; }
+    .app-pill.yellow { background: rgba(234,179,8,0.1);   border: 1px solid rgba(234,179,8,0.35);  color: #EAB308; }
+    .app-bday-row {
+      display: flex; align-items: center; gap: 5px; margin-top: 5px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 7px; padding: 5px 8px; font-size: 0.62rem; color: var(--text2);
+    }
+    .app-list-inner {
+      padding: 8px; display: flex; flex-direction: column; gap: 6px;
+      transition: transform 0.75s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .wapp-section { background: var(--bg2); }
+    .wapp-layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+    @media (max-width: 900px) { .wapp-layout { grid-template-columns: 1fr; } }
+
+    /* iPhone frame — proporção real ~1:2.16 */
+    .iphone-frame {
+      position: relative;
+      width: 320px;
+      background: linear-gradient(160deg, #2C2C2E 0%, #1A1A1E 50%, #2C2C2E 100%);
+      border-radius: 52px;
+      padding: 16px;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        0 0 0 1px #111,
+        0 0 0 2.5px #3A3A3C,
+        0 40px 100px rgba(0,0,0,0.8),
+        0 0 80px rgba(124,92,255,0.18);
+      flex-shrink: 0;
+    }
+    /* Fixed height + flex for both iPhones */
+    #clientIphone, #wappSection {
+      height: 580px;
+      display: flex;
+      flex-direction: column;
+    }
+    #wappSection .iphone-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    #wappSection .wapp-phone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    #wappSection .wapp-body {
+      flex: 1;
+    }
+    /* Volume buttons (left) */
+    .iphone-frame::before {
+      content: '';
+      position: absolute;
+      left: -4px; top: 100px;
+      width: 3.5px; height: 36px;
+      background: #3A3A3C;
+      border-radius: 3px 0 0 3px;
+      box-shadow: 0 50px 0 #3A3A3C, 0 96px 0 #3A3A3C;
+    }
+    /* Power button (right) */
+    .iphone-frame::after {
+      content: '';
+      position: absolute;
+      right: -4px; top: 140px;
+      width: 3.5px; height: 72px;
+      background: #3A3A3C;
+      border-radius: 0 3px 3px 0;
+    }
+    .iphone-screen {
+      background: #0B141A;
+      border-radius: 38px;
+      overflow: hidden;
+      position: relative;
+    }
+    #clientIphone .iphone-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Dynamic Island */
+    .iphone-island {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 28px;
+      background: #000; border-radius: 20px; z-index: 10;
+    }
+    /* Status bar */
+    .iphone-status {
+      height: 54px;
+      background: #202C33;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 22px 9px;
+      font-size: 12px; font-weight: 600; color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .iphone-status-right { display: flex; align-items: center; gap: 5px; }
+
+    .wapp-phone {
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
+    }
+    .wapp-header {
+      background: #202C33; padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .wapp-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple), #4ADE80);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+    }
+    .wapp-name { font-size: 0.875rem; font-weight: 600; }
+    .wapp-online { font-size: 0.72rem; color: #4ADE80; }
+    .wapp-api-badge {
+      margin-left: auto; padding: 3px 8px; border-radius: 6px;
+      background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25);
+      font-size: 0.65rem; font-weight: 700; color: #4ADE80; white-space: nowrap;
+    }
+    .wapp-body {
+      padding: 16px; min-height: 180px;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    /* Typing indicator */
+    .wapp-typing {
+      display: flex; align-items: center; gap: 4px;
+      padding: 10px 14px;
+      background: #202C33; border-radius: 10px 10px 10px 0;
+      width: fit-content; margin-bottom: 10px;
+    }
+    .wapp-typing span {
+      width: 8px; height: 8px; border-radius: 50%; background: #8696A0;
+      animation: typingDot 1.2s ease-in-out infinite;
+    }
+    .wapp-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .wapp-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot {
+      0%, 100% { opacity: 0.3; transform: scale(0.7); }
+      50%       { opacity: 1;   transform: scale(1); }
+    }
+    /* Message bubble */
+    .wapp-msg {
+      background: #202C33; border-radius: 10px 10px 10px 0;
+      padding: 10px 14px; max-width: 260px;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .wapp-msg p { font-size: 0.82rem; line-height: 1.6; color: var(--text2); }
+    .wapp-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 6px; }
+    .wapp-time { font-size: 0.65rem; color: #8696A0; }
+    .wapp-check { font-size: 0.72rem; color: #53BDEB; transition: opacity 0.25s ease; }
+
+    .wapp-list { display: flex; flex-direction: column; gap: 16px; }
+    .wapp-feature { display: flex; gap: 14px; }
+    .wapp-feature-icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(124,92,255,0.1); border: 1px solid rgba(124,92,255,0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    }
+    .wapp-feature-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 3px; }
+    .wapp-feature-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+
+
+    /* ════════ OBJEÇÃO ERP vs CRM ══════════════════ */
+    .erp-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+    @media (max-width: 768px) { .erp-layout { grid-template-columns: 1fr; } }
+    .erp-card { padding: clamp(22px, 3vw, 32px); }
+    .erp-header { margin-bottom: 20px; }
+    .erp-title { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; margin: 8px 0 4px; }
+    .erp-sub { font-size: 0.78rem; color: var(--muted); }
+    .erp-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .erp-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.875rem; color: var(--text2); line-height: 1.5; }
+    .erp-verdict {
+      padding: 12px 16px; border-radius: 10px; font-size: 0.82rem;
+      font-weight: 600; line-height: 1.5;
+    }
+    .erp-verdict.gray { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--muted); }
+    .erp-verdict.green { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); color: #4ADE80; }
+    .erp-full-quote {
+      grid-column: 1 / -1; padding: clamp(24px, 3vw, 36px); text-align: center;
+      border: 1px solid rgba(124,92,255,0.2);
+      background: rgba(124,92,255,0.04); border-radius: 20px; margin-top: 4px;
+    }
+    .erp-full-quote p { font-size: clamp(1rem, 2vw, 1.3rem); line-height: 1.65; color: var(--text2); }
+    .erp-full-quote strong { color: #fff; }
+
+
+    /* ════════ NÚMEROS ═════════════════════════════ */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: clamp(20px, 3vw, 32px); text-align: center;
+    }
+    .stat-number {
+      font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 700;
+      letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--muted); line-height: 1.4; }
+
+
+    /* ════════ CLIENTES ════════════════════════════ */
+    .client-logo-box {
+      flex-shrink: 0; width: 192px; height: 88px; border-radius: 16px;
+      background: var(--bg2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .client-logo-box:hover {
+      border-color: rgba(124,92,255,0.5);
+      box-shadow: 0 0 20px rgba(124,92,255,0.15);
+    }
+    .client-logo-box img { max-width: 140px; object-fit: contain; display: block; }
+    .client-logo-box img.invert { filter: brightness(0) invert(1); }
+
+
+    /* ════════ PLANOS ══════════════════════════════ */
+    .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+    .plan-card { padding: clamp(20px, 2.5vw, 28px); display: flex; flex-direction: column; }
+    .plan-popular {
+      border-color: rgba(124,92,255,0.5) !important;
+      background: rgba(124,92,255,0.04) !important;
+      box-shadow: 0 0 40px rgba(124,92,255,0.25), 0 0 0 1px rgba(124,92,255,0.12);
+    }
+    .plan-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--purple); color: #fff; font-size: 0.72rem; font-weight: 700;
+      padding: 3px 12px; border-radius: 99px; white-space: nowrap;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .plan-icon { font-size: 1.5rem; }
+    .plan-name { font-weight: 700; font-size: 1.1rem; margin-top: 8px; letter-spacing: -0.02em; }
+    .plan-limits { color: var(--muted); font-size: 0.75rem; margin-top: 4px; }
+    .plan-desc { color: #9AA1C4; font-size: 0.8rem; margin-top: 8px; line-height: 1.55; }
+    .plan-price-block { padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 16px 0; }
+    .plan-price { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.03em; }
+    .plan-freq { color: var(--muted); font-size: 0.85rem; }
+    .plan-subtotal { color: var(--muted); font-size: 0.75rem; margin-top: 4px; display: none; }
+    .annual .plan-subtotal { display: block; }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; flex: 1; margin-bottom: 20px; }
+    .plan-features li { display: flex; gap: 8px; font-size: 0.85rem; color: var(--text2); align-items: flex-start; }
+    .plan-features li span:first-child { color: #22C55E; flex-shrink: 0; margin-top: 1px; }
+    .toggle-wrap {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px; border-radius: 14px;
+      background: var(--card); border: 1px solid var(--border);
+    }
+    .toggle-btn {
+      padding: 8px 20px; border-radius: 10px; border: none; cursor: pointer;
+      font-weight: 600; font-size: 0.85rem; letter-spacing: -0.01em;
+      transition: all 0.2s ease; background: transparent; color: var(--muted);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .toggle-btn.active { background: var(--purple); color: #fff; }
+    .discount-badge {
+      padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;
+      background: rgba(34,197,94,0.12); color: #22C55E;
+    }
+    .toggle-btn.active .discount-badge { background: rgba(34,197,94,0.25); }
+    .annual-note { color: var(--muted); font-size: 0.85rem; margin-top: 10px; display: none; }
+    .annual-note.visible { display: block; }
+
+
+    /* ════════ CTA FINAL ═══════════════════════════ */
+    .cta-section {
+      position: relative; padding: clamp(80px, 12vw, 140px) 0;
+      text-align: center; overflow: hidden;
+    }
+    .cta-section::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(124,92,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,92,255,0.4), transparent);
+    }
+    .cta-title { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 1rem; }
+    .cta-sub { font-size: 1.1rem; color: var(--muted); max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.65; }
+
+
+    /* ════════ FOOTER ══════════════════════════════ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: clamp(28px, 5vw, 48px) 0;
+    }
+    .footer-inner {
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 20px;
+    }
+    .footer-logo img { height: 36px; width: auto; object-fit: contain; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-links a { font-size: 0.875rem; color: #9AA1C4; text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: #fff; }
+    .footer-copy { font-size: 0.82rem; color: var(--muted); }
+
+    /* ════════ FILTROS MARCA SECTION ═══════════════════════ */
+    #filtrosIphone {
+      height: 580px;
+      display: flex;
+      flex-direction: column;
+    }
+    #filtrosIphone .iphone-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0B1020;
+    }
+    #filtrosIphone .iphone-status {
+      background: #0B1020;
+    }
+    .filtros-main {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .filtros-page-hdr {
+      padding: 4px 14px 8px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .filtros-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #1E2D45;
+      border: 1px solid #2A3F5C;
+      border-radius: 10px;
+      padding: 7px 11px;
+      color: #D1D6F0;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .filtros-btn.tapped {
+      background: rgba(124,92,255,0.25);
+      border-color: rgba(124,92,255,0.6);
+    }
+    .filtros-count-badge {
+      position: absolute;
+      top: -5px; right: -5px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #22C55E;
+      color: #000;
+      font-size: 0.58rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .filtros-store-row, .filtros-search-row {
+      margin: 0 14px 7px;
+      background: #111827;
+      border: 1px solid #1E2D45;
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      color: #D1D6F0;
+    }
+    .filtros-search-row { color: #4B5563; gap: 7px; justify-content: flex-start; }
+    .filtros-quick-chips {
+      display: flex;
+      gap: 5px;
+      padding: 0 14px 8px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .filtros-qchip {
+      background: #111827;
+      border: 1px solid #1E2D45;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 0.62rem;
+      color: #9AA1C4;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .filtros-client-list {
+      flex: 1;
+      overflow: hidden;
+      padding: 0 10px;
+    }
+    .filtros-found-msg {
+      color: #22C55E;
+      font-size: 0.6rem;
+      text-align: center;
+      padding: 3px 0 5px;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .filtros-found-msg.show { opacity: 1; }
+    .filtros-client-row {
+      background: #0F172A;
+      border: 1px solid #1E2D45;
+      border-radius: 10px;
+      padding: 9px 11px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 5px;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .filtros-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7C5CFF 0%, #A78BFA 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    /* Filter panel */
+    .filter-panel {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 91%;
+      background: #0F172A;
+      border-left: 1px solid #1E2D45;
+      transform: translateX(103%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+      box-shadow: -10px 0 40px rgba(0,0,0,0.6);
+    }
+    .filter-panel.open { transform: translateX(0); }
+    .filter-panel-hdr {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1E2D45;
+      flex-shrink: 0;
+    }
+    .filter-panel-overflow { flex: 1; overflow: hidden; position: relative; }
+    .filter-panel-scroll {
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      transition: transform 0.65s cubic-bezier(0.4,0,0.2,1);
+    }
+    .filter-panel-scroll.scrolled { transform: translateY(-155px); }
+    .fp-sel-badge {
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 0.58rem;
+      color: #22C55E;
+      font-weight: 600;
+    }
+    .fp-label {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9AA1C4;
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .fp-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+    .fp-chip {
+      background: #111827;
+      border: 1px solid #1E2D45;
+      border-radius: 8px;
+      padding: 5px 9px;
+      color: #9AA1C4;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+    .fp-dropdown {
+      background: #111827;
+      border: 1px solid #1E2D45;
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #9AA1C4;
+    }
+    .fp-brand-box {
+      background: #111827;
+      border: 1px solid #1E2D45;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .fp-brand-hdr {
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1E2D45;
+      font-size: 0.78rem;
+      color: #D1D6F0;
+      font-weight: 600;
+    }
+    .fp-brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px;
+      background: transparent;
+      transition: background 0.25s ease;
+      font-size: 0.78rem;
+      color: #9AA1C4;
+    }
+    .fp-brand-row.checked {
+      background: rgba(124,92,255,0.1);
+      color: #D1D6F0;
+      font-weight: 600;
+    }
+    .fp-checkbox {
+      width: 16px; height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid #374151;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .fp-checkbox.checked {
+      background: var(--purple);
+      border-color: var(--purple);
+    }
+    .fp-apply-wrap {
+      padding: 10px 14px;
+      border-top: 1px solid #1E2D45;
+      flex-shrink: 0;
+    }
+    .fp-apply {
+      background: #1E2D45;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: background 0.35s ease;
+    }
+    .fp-apply.active { background: linear-gradient(135deg, #7C5CFF, #A78BFA); }
+    .filtros-dim {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 9%;
+      background: rgba(0,0,0,0.55);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 19;
+      pointer-events: none;
+    }
+    .filtros-dim.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAV ════════════════════════════════════════════════════ -->
+  <nav class="nav" id="mainNav">
+    <div class="inner nav-inner">
+      <a href="#" class="nav-logo">
+        <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/6536713ce_DiaBrilhanteeEnsolaradoGoogleClassroomCabealho.png" alt="MetaFácil" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"/>
+        <span style="display:none">MetaFácil</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#solucao">Solução</a></li>
+        <li><a href="#funcionalidades">Funcionalidades</a></li>
+        <li><a href="#planos">Planos</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="#planos" class="btn-nav">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agendar Reunião
+        </a>
+        <a href="#planos" class="btn-primary" style="padding:10px 20px;font-size:.875rem;border-radius:10px;">Ver planos</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ══ HERO ═══════════════════════════════════════════════════ -->
+  <section class="hero grid-bg" id="hero">
+    <div class="orb orb-purple" aria-hidden="true"></div>
+    <div class="orb orb-green"  aria-hidden="true"></div>
+    <div id="sparkleContainer" aria-hidden="true"></div>
+
+    <div class="inner hero-inner" style="position:relative;z-index:2">
+      <div class="hero-left">
+        <div class="hero-tag fade-up" style="--d:.05s">
+          <span class="tag"><span class="tag-dot"></span>CRM para lojas físicas</span>
+        </div>
+        <h1 class="hero-title hero-h1">
+          <span class="hero-h1-line">
+            <span class="word" style="--i:0">Você</span><span class="word" style="--i:1">já</span><span class="word" style="--i:2">tem</span>
+          </span>
+          <span class="hero-h1-line">
+            <span class="word" style="--i:3">os</span><span class="word" style="--i:4">clientes.</span>
+          </span>
+        </h1>
+        <div class="hero-rotating-wrap">
+          <span class="hero-rotating g-green" id="heroRotating" aria-live="polite">clientes que voltam</span>
+        </div>
+        <p class="hero-sub fade-up" style="--d:.75s">
+          O MetaFácil faz você usar isso. <strong>Pare de vender só para quem entra</strong> — sua maior oportunidade está na base que você já construiu.
+        </p>
+        <div class="hero-ctas fade-up" style="--d:.9s;flex-direction:column;align-items:flex-start">
+          <!-- Linha 1: botões principais -->
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <a href="#planos" class="btn-primary">Ver planos <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a href="#funcionalidades" class="btn-ghost">Ver funcionalidades</a>
+          </div>
+          <!-- Linha 2: App Store + badge WhatsApp (sempre juntos) -->
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap">
+            <a href="https://apps.apple.com/br/app/metafácil/id6764147124" class="btn-app" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              <div><div class="btn-app-sm">DISPONÍVEL NA</div><div class="btn-app-lg">App Store</div></div>
+            </a>
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);border-radius:10px;white-space:nowrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#22C55E"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <div style="line-height:1.2">
+                <div style="font-size:0.6rem;letter-spacing:0.05em;color:#4ADE80;font-weight:600">API OFICIAL</div>
+                <div style="font-size:0.82rem;font-weight:600;letter-spacing:-0.01em;color:#4ADE80">WhatsApp Meta</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-trust fade-up" style="--d:1.1s">
+          <div class="trust-item"><span class="trust-val">20–25%</span><span class="trust-lbl">aumento médio em vendas</span></div>
+          <div class="trust-item"><span class="trust-val">4.9★</span><span class="trust-lbl">avaliação média</span></div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-img-wrap">
+          <div class="hero-img-glow" aria-hidden="true"></div>
+          <div class="hero-img-inner float" id="heroFloat">
+            <img class="hero-img" src="https://media.base44.com/images/public/697a97b4e1fa042c457d8ac6/d984ea229_HeroLanding.png" alt="Dashboard MetaFácil"/>
+            <div class="float-badge float-badge-top">
+              <span style="font-size:1.1rem">💳</span>
+              <div><div class="fb-label">Cashback ativo</div><div class="fb-value purple">1.247 clientes</div></div>
+            </div>
+            <div class="float-badge float-badge-bot">
+              <span style="font-size:1.1rem">📈</span>
+              <div><div class="fb-label">Vendas hoje</div><div class="fb-value green">+23% acima da meta</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-fade" aria-hidden="true"></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ WHATSAPP ══════════════════════════════════════════════ -->
+  <section class="wapp-section grid-bg section-pad" style="position:relative;overflow:hidden;">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,0.09) 0%,transparent 70%);filter:blur(70px);pointer-events:none;z-index:0;"></div>
+    <div class="inner" style="position:relative;z-index:1">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:center;">
+
+        <!-- LEFT: iPhone -->
+        <div style="display:flex;justify-content:center;" class="reveal-left">
+          <div class="iphone-frame" id="wappSection">
+            <div class="iphone-screen">
+              <div class="iphone-island"></div>
+              <div class="iphone-status">
+                <span>16:42</span>
+                <div class="iphone-status-right">
+                  <svg width="16" height="11" viewBox="0 0 16 11" fill="white"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="4.5" width="3" height="6.5" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1" opacity=".3"/></svg>
+                  <svg width="15" height="11" viewBox="0 0 15 11" fill="white"><path d="M7.5 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0-3.5a5.5 5.5 0 014.2 1.95l-1.4 1.4A3.5 3.5 0 007.5 7a3.5 3.5 0 00-2.8 1.35L3.3 6.95A5.5 5.5 0 017.5 5zm0-4a9.5 9.5 0 017.1 3.2l-1.4 1.4A7.5 7.5 0 007.5 3a7.5 7.5 0 00-5.7 2.6L.4 4.2A9.5 9.5 0 017.5 1z" opacity=".9"/></svg>
+                  <svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="21" height="10" rx="3" stroke="white" stroke-width="1.2" fill="none"/><rect x="21.5" y="3.5" width="2" height="5" rx="1" fill="white" opacity=".4"/><rect x="1.5" y="2.5" width="16" height="7" rx="2" fill="white"/></svg>
+                </div>
+              </div>
+              <div class="wapp-phone">
+                <div class="wapp-header">
+                  <div class="wapp-avatar">M</div>
+                  <div style="flex:1">
+                    <div class="wapp-name">Sua Loja</div>
+                    <div class="wapp-online">online</div>
+                  </div>
+                  <div class="wapp-api-badge">API Oficial Meta</div>
+                </div>
+                <div class="wapp-body">
+                  <div class="wapp-typing" id="wappTyping">
+                    <span></span><span></span><span></span>
+                  </div>
+                  <div class="wapp-msg" id="wappMsg" style="opacity:0;transform:translateY(8px)">
+                    <p>Oi, Carlos! Você tem <strong>R$ 80,00</strong> de cashback disponível na nossa loja e ele vence em <strong>3 dias</strong>. Que tal aproveitar? Te esperamos! 🛍️</p>
+                    <div class="wapp-meta">
+                      <span class="wapp-time">16:42</span>
+                      <span class="wapp-check" id="wappCheck" style="opacity:0">✓✓</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="background:#0B141A;padding:8px 0 6px;display:flex;justify-content:center;flex-shrink:0">
+                <div style="width:100px;height:4px;background:rgba(255,255,255,0.3);border-radius:99px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: text -->
+        <div class="reveal-right">
+          <span class="tag" style="margin-bottom:16px;display:inline-flex">WhatsApp Business</span>
+          <p class="section-title" style="margin-top:14px;margin-bottom:16px">A mensagem certa.<br>Para o cliente certo.<br><span class="g-purple">Na hora certa.</span></p>
+          <p style="color:var(--muted);font-size:1rem;line-height:1.7;margin-bottom:24px">Dois modelos de disparo — um pelo vendedor, outro pelo sistema. Sem spam, sem risco de ban, via API Oficial Meta.</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="feature-chip"><span>🧑‍💼</span><p><strong style="color:var(--text2)">Humanizado:</strong> vendedor vê o perfil, escolhe o cliente e manda pelo próprio WhatsApp</p></div>
+            <div class="feature-chip"><span>🤖</span><p><strong style="color:var(--text2)">Automatizado:</strong> sistema identifica quem se enquadra e dispara com intervalo configurável</p></div>
+            <div class="feature-chip"><span>📅</span><p>Alerta quando faltar 10, 5 ou 3 dias pro cashback vencer</p></div>
+            <div class="feature-chip"><span>🎂</span><p>Mensagem automática de aniversário para o cliente</p></div>
+            <div class="feature-chip" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.06)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#4ADE80"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <p style="color:#4ADE80;font-weight:600">API Oficial Meta · Sem risco de ban</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ CASHBACK NÃO É DESCONTO ════════════════════════════════ -->
+  <section id="funcionalidades" style="background:var(--bg2);position:relative;overflow:hidden;padding:clamp(48px,7vw,80px) 0;">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(124,92,255,0.07) 0%,transparent 70%);filter:blur(60px);pointer-events:none;"></div>
+    <div class="inner-sm" style="position:relative;z-index:1">
+      <div style="max-width:700px;margin:0 auto;text-align:center" class="reveal">
+        <span class="tag" style="margin-bottom:18px;display:inline-flex">Cashback como estratégia</span>
+        <p class="section-title" style="margin-top:0;line-height:1.25">
+          <span style="color:var(--text);font-weight:400">"Cashback não é desconto.</span><br>
+          <span style="display:block;min-height:3.8em">
+            <span id="cashbackRotating" style="color:var(--purple);font-weight:700;transition:opacity 0.5s ease">É fidelização real.<br>É recompra garantida.</span><span style="color:var(--text);font-weight:400">"</span>
+          </span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ DEMO: O APP NA MÃO DO VENDEDOR ════════════════════════ -->
+  <section style="background:var(--bg2);position:relative;overflow:hidden;" class="section-pad" id="clientDemoSection">
+    <div style="position:absolute;top:50%;right:0;transform:translateY(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(124,92,255,0.07) 0%,transparent 70%);filter:blur(80px);pointer-events:none;"></div>
+    <div class="inner" style="position:relative;z-index:1">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:center;">
+
+        <!-- Left: description -->
+        <div class="reveal-left">
+          <span class="tag" style="margin-bottom:16px;display:inline-flex">Perfil do cliente</span>
+          <p class="section-title" style="margin-top:14px;margin-bottom:16px">Em segundos, o vendedor sabe <span class="g-green">tudo sobre o cliente.</span></p>
+          <p style="color:var(--muted);font-size:1rem;line-height:1.7;margin-bottom:24px">Sem precisar perguntar. Sem abrir planilha. O app mostra cashback disponível, quando vence, histórico de compras, marcas preferidas e tamanho — antes de qualquer conversa.</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="feature-chip"><span>💳</span><p>Cashback disponível e data de vencimento</p></div>
+            <div class="feature-chip"><span>📞</span><p>Botão direto para o WhatsApp do cliente</p></div>
+            <div class="feature-chip"><span>🛍️</span><p>Total de compras e valor gasto</p></div>
+            <div class="feature-chip"><span>🎯</span><p>Categorias, marcas e tamanhos favoritos</p></div>
+            <div class="feature-chip"><span>🎂</span><p>Data de aniversário cadastrada</p></div>
+          </div>
+        </div>
+
+        <!-- Right: iPhone with animated client card -->
+        <div style="display:flex;justify-content:center;" class="reveal-right">
+          <div class="iphone-frame" id="clientIphone">
+            <div class="iphone-screen">
+              <div class="iphone-island"></div>
+              <div class="iphone-status">
+                <span>9:41</span>
+                <div class="iphone-status-right">
+                  <svg width="16" height="11" viewBox="0 0 16 11" fill="white"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="4.5" width="3" height="6.5" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1" opacity=".3"/></svg>
+                  <svg width="15" height="11" viewBox="0 0 15 11" fill="white"><path d="M7.5 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0-3.5a5.5 5.5 0 014.2 1.95l-1.4 1.4A3.5 3.5 0 007.5 7a3.5 3.5 0 00-2.8 1.35L3.3 6.95A5.5 5.5 0 017.5 5zm0-4a9.5 9.5 0 017.1 3.2l-1.4 1.4A7.5 7.5 0 007.5 3a7.5 7.5 0 00-5.7 2.6L.4 4.2A9.5 9.5 0 017.5 1z"/></svg>
+                  <svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="21" height="10" rx="3" stroke="white" stroke-width="1.2" fill="none"/><rect x="21.5" y="3.5" width="2" height="5" rx="1" fill="white" opacity=".4"/><rect x="1.5" y="2.5" width="16" height="7" rx="2" fill="white"/></svg>
+                </div>
+              </div>
+              <div class="app-header-bar">
+                <h3>Clientes</h3>
+                <p>128 clientes cadastrados</p>
+                <div class="app-search">🔍 Buscar cliente...</div>
+              </div>
+              <div class="app-client-list">
+               <div class="app-list-inner" id="demoListInner">
+                <!-- Card 1: animated -->
+                <div class="app-client-card" id="demoCard1">
+                  <div class="app-client-name-row">
+                    <div class="app-avatar-sm">👤</div>
+                    <span class="app-name">Ana Carolina S.</span>
+                  </div>
+                  <div class="app-cashback-badge">
+                    <div>
+                      <div class="app-cashback-label">💳 Cashback</div>
+                      <div class="app-cashback-label">disponível</div>
+                    </div>
+                    <span class="app-cashback-value">R$ 87,50</span>
+                  </div>
+                  <div class="app-actions">
+                    <button class="app-phone-btn">💬 (11)98432-5517</button>
+                    <button class="app-expiry-btn">🕐 Vence em 12 dias</button>
+                  </div>
+                  <div class="app-details-toggle" id="demoToggle1">∨ Ver mais detalhes</div>
+                  <div class="app-details-panel" id="demoDetails1">
+                    <div class="app-hist-title">🛍️ Histórico do Cliente</div>
+                    <div class="app-hist-grid">
+                      <div class="app-hist-box">
+                        <div class="app-hist-box-lbl">Total de compras</div>
+                        <div class="app-hist-box-val">4</div>
+                      </div>
+                      <div class="app-hist-box">
+                        <div class="app-hist-box-lbl">Total gasto</div>
+                        <div class="app-hist-box-val green">R$ 742,00</div>
+                      </div>
+                    </div>
+                    <div class="app-hist-row">
+                      <span>Última compra:</span>
+                      <span>14/06/2026 (3d atrás)</span>
+                    </div>
+                    <div class="app-interests" id="demoInterests1">
+                      <div class="app-int-group">
+                        <div class="app-int-label">🏷️ Categorias</div>
+                        <div class="app-pills"><span class="app-pill purple">Vestidos</span><span class="app-pill purple">Acessórios</span></div>
+                      </div>
+                      <div class="app-int-group">
+                        <div class="app-int-label">🏷️ Marcas</div>
+                        <div class="app-pills"><span class="app-pill green">Farm</span><span class="app-pill green">Animale</span></div>
+                      </div>
+                      <div class="app-int-group">
+                        <div class="app-int-label">📐 Tamanhos</div>
+                        <div class="app-pills"><span class="app-pill yellow">P</span><span class="app-pill yellow">PP</span></div>
+                      </div>
+                      <div class="app-bday-row">🎂 Aniversário: 23/03/1994</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Card 2 (static) -->
+                <div class="app-client-card" style="opacity:0.5">
+                  <div class="app-client-name-row">
+                    <div class="app-avatar-sm">👤</div>
+                    <span class="app-name">Roberto Almeida</span>
+                  </div>
+                  <div class="app-cashback-badge">
+                    <div><div class="app-cashback-label">💳 Cashback disponível</div></div>
+                    <span class="app-cashback-value">R$ 194,96</span>
+                  </div>
+                  <div class="app-actions">
+                    <button class="app-phone-btn">💬 (45)98822-0209</button>
+                    <button class="app-expiry-btn">🕐 Vence em 48 dias</button>
+                  </div>
+                </div>
+               </div><!-- /demoListInner -->
+              </div>
+              <div style="background:#0B1020;padding:8px 0 6px;display:flex;justify-content:center;flex-shrink:0">
+                <div style="width:90px;height:4px;background:rgba(255,255,255,0.25);border-radius:99px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ FILTROS POR MARCA ══════════════════════════════════════ -->
+  <section id="filtrosMarcaSection" style="background:var(--bg2);position:relative;overflow:hidden;" class="section-pad">
+    <div style="position:absolute;top:50%;right:0;transform:translateY(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(124,92,255,0.07) 0%,transparent 70%);filter:blur(80px);pointer-events:none;"></div>
+    <div class="inner" style="position:relative;z-index:1">
+      <div class="wapp-layout">
+
+        <!-- LEFT: iPhone mockup -->
+        <div class="reveal-left" style="display:flex;justify-content:center">
+          <div class="iphone-frame" id="filtrosIphone">
+            <div class="iphone-screen">
+              <div class="iphone-island"></div>
+              <div class="iphone-status">
+                <span>9:41</span>
+                <div class="iphone-status-right">
+                  <svg width="16" height="11" viewBox="0 0 16 11" fill="white"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="4.5" width="3" height="6.5" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1" opacity=".3"/></svg>
+                  <svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="21" height="10" rx="3" stroke="white" stroke-width="1.2" fill="none"/><rect x="21.5" y="3.5" width="2" height="5" rx="1" fill="white" opacity=".4"/><rect x="1.5" y="2.5" width="16" height="7" rx="2" fill="white"/></svg>
+                </div>
+              </div>
+
+              <!-- App header bar -->
+              <div style="padding:4px 14px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:8px">
+                <div style="display:flex;align-items:center;gap:7px">
+                  <svg width="18" height="18" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="lgfm3" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#7C5CFF"/><stop offset="1" stop-color="#22C55E"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#lgfm3)"/><text x="16" y="22" text-anchor="middle" fill="white" font-size="16" font-weight="700">M</text></svg>
+                  <span style="color:#fff;font-weight:700;font-size:0.78rem;letter-spacing:-0.01em">meta<span style="color:#22C55E">fácil</span>.app</span>
+                </div>
+                <div style="display:flex;gap:10px">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1C4" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1C4" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </div>
+              </div>
+
+              <!-- Main screen -->
+              <div class="filtros-main">
+
+                <!-- Page header -->
+                <div class="filtros-page-hdr">
+                  <div>
+                    <p style="color:#fff;font-weight:700;font-size:1.15rem;line-height:1.2">Clientes<br>Cashback</p>
+                    <p id="filtrosCount" style="color:#6B7280;font-size:0.6rem;margin-top:2px">341 cliente(s) no total</p>
+                  </div>
+                  <button class="filtros-btn" id="filtrosBtn">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    Filtros
+                    <span class="filtros-count-badge" id="filtrosBadge" style="display:none">2</span>
+                  </button>
+                </div>
+
+                <!-- Store selector -->
+                <div class="filtros-store-row">
+                  <span>Urban Concept</span>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+
+                <!-- Search -->
+                <div class="filtros-search-row">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <span>Buscar por nome ou telefone...</span>
+                </div>
+
+                <!-- Quick filter chips -->
+                <div class="filtros-quick-chips">
+                  <span class="filtros-qchip">⏰ Vencendo</span>
+                  <span class="filtros-qchip">🎂 Aniversar...</span>
+                  <span class="filtros-qchip">👥 Mostrar Todos</span>
+                  <span class="filtros-qchip">🏆 Ranking</span>
+                </div>
+
+                <!-- Client list -->
+                <div class="filtros-client-list">
+                  <p class="filtros-found-msg" id="filtrosFoundMsg">✓ Nike + Adidas — 2 clientes encontrados</p>
+                  <div id="filtrosClientList">
+                    <div class="filtros-client-row">
+                      <div class="filtros-avatar">M</div>
+                      <div style="flex:1;min-width:0">
+                        <p style="color:#fff;font-weight:700;font-size:0.67rem">MARCOS SILVA</p>
+                        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                          <span style="color:#22C55E;font-size:0.58rem;font-weight:600">Cashback disponível</span>
+                        </div>
+                      </div>
+                      <p style="color:#22C55E;font-size:0.72rem;font-weight:700;flex-shrink:0">R$ 87,50</p>
+                    </div>
+                    <div class="filtros-client-row" id="filtrosHideJulia">
+                      <div class="filtros-avatar">J</div>
+                      <div style="flex:1;min-width:0">
+                        <p style="color:#fff;font-weight:700;font-size:0.67rem">JULIA COSTA</p>
+                        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                          <span style="color:#F59E0B;font-size:0.58rem;font-weight:600">Vencendo em 5 dias</span>
+                        </div>
+                      </div>
+                      <p style="color:#22C55E;font-size:0.72rem;font-weight:700;flex-shrink:0">R$ 142,00</p>
+                    </div>
+                    <div class="filtros-client-row" id="filtrosHidePedro">
+                      <div class="filtros-avatar">P</div>
+                      <div style="flex:1;min-width:0">
+                        <p style="color:#fff;font-weight:700;font-size:0.67rem">PEDRO SANTOS</p>
+                        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                          <span style="color:#F59E0B;font-size:0.58rem;font-weight:600">Vencendo em 3 dias</span>
+                        </div>
+                      </div>
+                      <p style="color:#22C55E;font-size:0.72rem;font-weight:700;flex-shrink:0">R$ 65,00</p>
+                    </div>
+                    <div class="filtros-client-row">
+                      <div class="filtros-avatar">B</div>
+                      <div style="flex:1;min-width:0">
+                        <p style="color:#fff;font-weight:700;font-size:0.67rem">BEATRIZ LIMA</p>
+                        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                          <span style="color:#22C55E;font-size:0.58rem;font-weight:600">Cashback disponível</span>
+                        </div>
+                      </div>
+                      <p style="color:#22C55E;font-size:0.72rem;font-weight:700;flex-shrink:0">R$ 210,00</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- FILTER PANEL (slides in from right) -->
+                <div class="filter-panel" id="filtrosPanel">
+                  <!-- Panel header -->
+                  <div class="filter-panel-hdr">
+                    <span style="color:#D1D6F0;font-weight:700;font-size:0.85rem">Filtros</span>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <span class="fp-sel-badge" id="fpSelBadge" style="display:none">2 selecionados</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </div>
+                  </div>
+
+                  <!-- Scrollable content -->
+                  <div class="filter-panel-overflow">
+                    <div class="filter-panel-scroll" id="fpScroll">
+                      <!-- Vencendo -->
+                      <div>
+                        <p class="fp-label">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          VENCENDO — PRÓXIMOS DIAS
+                        </p>
+                        <div class="fp-chips">
+                          <span class="fp-chip">15d</span>
+                          <span class="fp-chip">30d</span>
+                          <span class="fp-chip">40d</span>
+                          <span class="fp-chip">60d</span>
+                          <span class="fp-chip">90d</span>
+                        </div>
+                      </div>
+
+                      <!-- Aniversariantes -->
+                      <div>
+                        <p class="fp-label" style="color:#F87171">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3v4M8 3v4M3 13h18"/></svg>
+                          ANIVERSARIANTES — PERÍODO
+                        </p>
+                        <div class="fp-chips">
+                          <span class="fp-chip">Hoje</span>
+                          <span class="fp-chip">Próx. 7 dias</span>
+                          <span class="fp-chip">Este Mês</span>
+                        </div>
+                      </div>
+
+                      <!-- Categoria dropdown -->
+                      <div class="fp-dropdown">
+                        <span>Categoria de Interesse</span>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+
+                      <!-- Marca de Interesse (expanded) -->
+                      <div class="fp-brand-box">
+                        <div class="fp-brand-hdr">
+                          <span>Marca de Interesse</span>
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+                        </div>
+                        <div id="fpBrandList">
+                          <div class="fp-brand-row" data-brand="Nike">
+                            <div class="fp-checkbox" id="fpCb0"></div>
+                            <span>Nike</span>
+                          </div>
+                          <div class="fp-brand-row" data-brand="Adidas">
+                            <div class="fp-checkbox" id="fpCb1"></div>
+                            <span>Adidas</span>
+                          </div>
+                          <div class="fp-brand-row" data-brand="Puma">
+                            <div class="fp-checkbox" id="fpCb2"></div>
+                            <span>Puma</span>
+                          </div>
+                          <div class="fp-brand-row" data-brand="Vans">
+                            <div class="fp-checkbox" id="fpCb3"></div>
+                            <span>Vans</span>
+                          </div>
+                          <div class="fp-brand-row" data-brand="Oakley">
+                            <div class="fp-checkbox" id="fpCb4"></div>
+                            <span>Oakley</span>
+                          </div>
+                          <div class="fp-brand-row" data-brand="Mizuno">
+                            <div class="fp-checkbox" id="fpCb5"></div>
+                            <span>Mizuno</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Tamanho dropdown -->
+                      <div class="fp-dropdown">
+                        <span>Tamanho de Interesse</span>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Apply button -->
+                  <div class="fp-apply-wrap">
+                    <div class="fp-apply" id="fpApply">Aplicar filtros</div>
+                  </div>
+                </div>
+
+                <!-- Dim overlay left side when panel open -->
+                <div class="filtros-dim" id="filtrosDim"></div>
+              </div><!-- /.filtros-main -->
+            </div><!-- /.iphone-screen -->
+          </div><!-- /.iphone-frame -->
+        </div>
+
+        <!-- RIGHT: text + chips -->
+        <div class="reveal-right">
+          <span class="tag" style="margin-bottom:16px;display:inline-flex">Segmentação de Clientes</span>
+          <p style="font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:700;letter-spacing:-0.03em;line-height:1.2;margin-top:14px">
+            <span class="g-green">Chegou reposição</span> da <span style="color:#4ADE80;font-weight:800">Nike</span>.<br>
+            Coleção nova da <span class="g-purple">Adidas</span>.<br>
+            <span style="color:var(--muted);font-weight:600;font-size:0.88em">Seu vendedor sabe qual cliente avisar?</span>
+          </p>
+          <p style="color:var(--text2);font-size:1rem;font-weight:600;line-height:1.6;margin:16px 0 6px">Com o MetaFácil, <span class="g-green">sabe.</span></p>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px">Filtre sua base por marca de interesse e chegue antes da concorrência — sem planilha, sem adivinhação.</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="feature-chip"><span>🏷️</span><p><strong style="color:var(--text2)">Marca de Interesse:</strong> filtre quem prefere Nike, Adidas ou qualquer outra marca e envie a oferta certa</p></div>
+            <div class="feature-chip"><span>⏰</span><p><strong style="color:var(--text2)">Cashback Vencendo:</strong> acione clientes a 10, 5 ou 3 dias do vencimento antes que percam o benefício</p></div>
+            <div class="feature-chip"><span>🎂</span><p><strong style="color:var(--text2)">Aniversariantes:</strong> hoje, próximos 7 dias ou este mês — mensagem personalizada na data certa</p></div>
+            <div class="feature-chip"><span>📦</span><p><strong style="color:var(--text2)">Categoria e Tamanho:</strong> combine múltiplos filtros para ações ainda mais precisas</p></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ PILAR 2: EQUIPE & METAS ════════════════════════════════ -->
+  <section style="background:var(--bg);position:relative;overflow:hidden;" class="section-pad">
+    <div style="position:absolute;bottom:0;right:0;width:500px;height:500px;background:radial-gradient(circle,rgba(124,92,255,0.07) 0%,transparent 70%);filter:blur(80px);pointer-events:none;"></div>
+    <div class="inner" style="position:relative;z-index:1">
+      <div class="section-header reveal">
+        <span class="tag">Gestão de Equipe & Metas</span>
+        <p class="section-title" style="margin-top:14px">Cada vendedor sabe <span class="g-purple">exatamente</span> onde está.</p>
+        <p>Menos cobrança, mais clareza. Painel individual com meta, progresso e ranking.</p>
+      </div>
+
+      <!-- Visíveis por padrão: Missões + Prospecção -->
+      <div class="bento-grid">
+        <div class="bento-card bento-7 reveal" style="transition-delay:0s">
+          <div class="bento-pad">
+            <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#A78BFA;margin-bottom:10px">Missões de Venda</p>
+            <p class="section-title-sm" style="margin-bottom:12px">Objetivos comerciais<br>viram <span class="g-green">desafios com regras.</span></p>
+            <p class="bento-lead" style="margin-bottom:20px">Vender X peças de uma marca. Atingir ticket médio mínimo. Bater X atendimentos com Y itens. O gestor cria, o time executa.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div class="feature-chip"><span>🎯</span><p>Meta por marca ou categoria</p></div>
+              <div class="feature-chip"><span>🧾</span><p>Ticket médio mínimo configurável</p></div>
+              <div class="feature-chip"><span>📊</span><p>Progresso visível em tempo real</p></div>
+              <div class="feature-chip"><span>🏅</span><p>Ranking entre participantes</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card bento-5 reveal" style="transition-delay:.1s;border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.03)">
+          <div class="bento-pad">
+            <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4ADE80;margin-bottom:10px">Controle de Prospecção</p>
+            <p class="section-title-sm" style="margin-bottom:12px">Quem está <span class="g-green">correndo atrás?</span></p>
+            <p class="bento-lead">O sistema registra quantos contatos cada vendedor fez com clientes da base. Você vê quem vai buscar o cliente que sumiu — não só quem vende para quem entra.</p>
+            <div style="margin-top:20px;padding:14px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:12px">
+              <p style="font-size:.78rem;color:#4ADE80;font-weight:600">Controle de ativação</p>
+              <p style="font-size:.78rem;color:var(--muted);margin-top:4px">Histórico completo de quem ligou, quando, e quantos clientes foram acionados.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botão Ver mais -->
+      <div style="text-align:center;margin-top:28px">
+        <button id="btnVerMais" class="btn-ghost" onclick="(function(){
+          var el=document.getElementById('extraCards');
+          var btn=document.getElementById('btnVerMais');
+          var open=el.getAttribute('data-open')==='1';
+          el.style.maxHeight=open?'0':'900px';
+          el.setAttribute('data-open',open?'0':'1');
+          btn.innerHTML=open?'Ver mais funções <svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.5&quot;><polyline points=&quot;6 9 12 15 18 9&quot;/></svg>':'Ver menos <svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.5&quot;><polyline points=&quot;18 15 12 9 6 15&quot;/></svg>';
+        })()">
+          Ver mais funções
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+
+      <!-- Cards ocultos: Dashboard + Painel individual -->
+      <div id="extraCards" data-open="0" style="max-height:0;overflow:hidden;transition:max-height 0.7s cubic-bezier(0.4,0,0.2,1)">
+        <div class="bento-grid" style="margin-top:16px">
+          <div class="bento-card bento-5">
+            <div class="bento-pad">
+              <p class="section-title-sm">Em segundos você sabe<br><span class="g-green">como a loja está.</span></p>
+              <p class="bento-lead">Meta do mês, realizado, percentual atingido e progresso visual em um único painel. Para o gestor e para cada vendedor.</p>
+            </div>
+            <div class="bento-img-row">
+              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/bbcb58980_HappyMothersDayPresentation169-1.png" alt="Dashboard admin"/>
+            </div>
+          </div>
+
+          <div class="bento-card bento-7">
+            <div class="bento-pad">
+              <p class="section-title-sm">Painel individual.<br><span class="g-purple">Sem desculpa.</span></p>
+              <p class="bento-lead">Cada vendedor acompanha em tempo real: progresso da meta, ticket médio, peças por atendimento e posição no ranking.</p>
+            </div>
+            <div class="bento-img-row">
+              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/003436927_HappyMothersDayPresentation1693.png" alt="Painel vendedor"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ PILAR 4: RELATÓRIOS ════════════════════════════════════ -->
+  <section style="background:var(--bg);position:relative;overflow:hidden;" class="section-pad">
+    <div class="inner" style="position:relative;z-index:1">
+      <div class="section-header reveal">
+        <span class="tag">Relatórios & Inteligência</span>
+        <p class="section-title" style="margin-top:14px">Compre melhor porque você <span class="g-purple">sabe o que vende.</span></p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+        <div class="card reveal" style="padding:clamp(20px,3vw,28px);transition-delay:0s">
+          <div style="font-size:1.8rem;margin-bottom:14px">👟</div>
+          <p style="font-weight:700;font-size:1rem;margin-bottom:8px;letter-spacing:-.02em">Marcas mais vendidas</p>
+          <p style="color:var(--muted);font-size:.85rem;line-height:1.6">Veja quais marcas têm mais saída por período. Negocie melhor, compre certo.</p>
+        </div>
+        <div class="card reveal" style="padding:clamp(20px,3vw,28px);transition-delay:.1s">
+          <div style="font-size:1.8rem;margin-bottom:14px">📐</div>
+          <p style="font-weight:700;font-size:1rem;margin-bottom:8px;letter-spacing:-.02em">Tamanhos mais saídos</p>
+          <p style="color:var(--muted);font-size:.85rem;line-height:1.6">Quais tamanhos e categorias têm maior volume — por período, por loja.</p>
+        </div>
+        <div class="card reveal" style="padding:clamp(20px,3vw,28px);transition-delay:.2s">
+          <div style="font-size:1.8rem;margin-bottom:14px">📊</div>
+          <p style="font-weight:700;font-size:1rem;margin-bottom:8px;letter-spacing:-.02em">Comparativo de períodos</p>
+          <p style="color:var(--muted);font-size:.85rem;line-height:1.6">Performance comparativa entre meses. Identifique tendências antes que virem problema.</p>
+        </div>
+        <div class="card reveal" style="padding:clamp(20px,3vw,28px);transition-delay:.3s">
+          <div style="font-size:1.8rem;margin-bottom:14px">🗂️</div>
+          <p style="font-weight:700;font-size:1rem;margin-bottom:8px;letter-spacing:-.02em">Categorias por volume</p>
+          <p style="color:var(--muted);font-size:.85rem;line-height:1.6">Entenda quais categorias sustentam sua operação e onde há espaço para crescer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ OBJEÇÃO ERP vs CRM ══════════════════════════════════════ -->
+  <section style="background:var(--bg2);position:relative;overflow:hidden;" class="section-pad">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:400px;background:radial-gradient(ellipse,rgba(124,92,255,0.06) 0%,transparent 70%);filter:blur(60px);pointer-events:none;"></div>
+    <div class="inner-sm" style="position:relative;z-index:1">
+      <div class="section-header reveal">
+        <span class="tag" style="border-color:rgba(255,183,71,0.3);background:rgba(255,183,71,0.08);color:#FFB547">Uma dúvida comum</span>
+        <p class="section-title" style="margin-top:14px">"Mas eu <span style="color:#FFB547">já pago um sistema."</span></p>
+        <p>Muita loja já tem um sistema de gestão. Isso é ERP — não é CRM. São ferramentas diferentes com objetivos diferentes.</p>
+      </div>
+
+      <div class="erp-layout">
+        <div class="bento-card erp-card reveal-left">
+          <div class="erp-header">
+            <span class="tag" style="border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:var(--muted)">ERP — Sistema de gestão fiscal</span>
+            <p class="erp-title" style="color:var(--text2)">Sistema fiscal</p>
+            <p class="erp-sub">Você paga porque é obrigado por lei.</p>
+          </div>
+          <ul class="erp-list">
+            <li><span style="color:var(--muted)">→</span>Emite nota fiscal (obrigação legal)</li>
+            <li><span style="color:var(--muted)">→</span>Controla estoque (obrigação operacional)</li>
+            <li><span style="color:var(--muted)">→</span>Registra vendas no PDV</li>
+            <li><span style="color:var(--muted)">→</span>Cumpre compliance tributário</li>
+          </ul>
+          <div class="erp-verdict gray">É um custo de compliance. Necessário. Mas não gera recompra.</div>
+        </div>
+
+        <div class="bento-card erp-card reveal-right" style="border-color:rgba(124,92,255,0.3)">
+          <div class="erp-header">
+            <span class="tag">MetaFácil — CRM</span>
+            <p class="erp-title" style="color:#fff">Sistema de resultado</p>
+            <p class="erp-sub">Você paga porque ele se paga — com a primeira venda recuperada.</p>
+          </div>
+          <ul class="erp-list">
+            <li><span style="color:#22C55E">→</span>Conhece seus clientes de verdade</li>
+            <li><span style="color:#22C55E">→</span>Traz quem sumiu de volta</li>
+            <li><span style="color:#22C55E">→</span>Engaja e mede sua equipe de vendas</li>
+            <li><span style="color:#22C55E">→</span>Gera recompra ativa com cashback</li>
+          </ul>
+          <div class="erp-verdict green">Não substitui seu sistema atual. Faz o que ele nunca vai fazer.</div>
+        </div>
+
+        <div class="erp-full-quote reveal" style="transition-delay:.2s">
+          <p>"Você já paga um sistema. Mas ele emite nota fiscal, não traz cliente de volta.<br><strong>ERP é obrigação. CRM é resultado.</strong>"</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ CLIENTES ════════════════════════════════════════════════ -->
+  <section style="background:var(--bg);" class="section-pad">
+    <div class="inner-sm">
+      <div class="section-header reveal">
+        <p style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Confiados por lojistas em todo Brasil</p>
+        <p class="section-title-sm">Nossos clientes</p>
+      </div>
+    </div>
+    <div class="marquee-wrap reveal">
+      <div class="marquee-track" id="marqueeTrack"></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ PLANOS ══════════════════════════════════════════════════ -->
+  <section id="planos" style="background:var(--bg);position:relative;overflow:hidden;" class="section-pad">
+    <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:800px;height:300px;background:radial-gradient(ellipse,rgba(124,92,255,0.08) 0%,transparent 70%);filter:blur(60px);pointer-events:none;"></div>
+    <div class="inner-sm" style="position:relative;z-index:1">
+      <div class="section-header reveal">
+        <p class="section-title">Escolha o plano ideal</p>
+        <p>Controle, performance e crescimento real para sua loja ou rede</p>
+        <div style="margin-top:24px">
+          <div class="toggle-wrap">
+            <button class="toggle-btn active" data-period="monthly" id="btnMonthly">Mensal</button>
+            <button class="toggle-btn" data-period="annual" id="btnAnnual">
+              Anual
+              <span class="discount-badge">-17%</span>
+            </button>
+          </div>
+          <p class="annual-note" id="annualNote">No anual você paga 10 meses e usa 12 — <span style="color:#22C55E">economize 2 meses</span></p>
+        </div>
+      </div>
+
+      <div class="plans-grid" id="plansContainer">
+
+        <div class="bento-card plan-card reveal" style="position:relative;transition-delay:0s">
+          <div class="plan-icon">📈</div>
+          <p class="plan-name">Crescimento</p>
+          <p class="plan-limits">1 loja · 5 vendedores · 1 admin</p>
+          <p class="plan-desc">Ideal para lojas que querem organizar operação, controlar metas e aumentar performance da equipe.</p>
+          <div class="plan-price-block">
+            <span class="plan-price" data-monthly="R$ 379,90" data-annual="R$ 316,58">R$ 379,90</span>
+            <span class="plan-freq">/mês</span>
+            <p class="plan-subtotal">Total anual: R$ 3.799,00</p>
+          </div>
+          <ul class="plan-features">
+            <li><span>✓</span>Metas mensais e anuais</li>
+            <li><span>✓</span>Ranking de vendedores</li>
+            <li><span>✓</span>Campanhas de vendas</li>
+            <li><span>✓</span>Dashboard de performance</li>
+            <li><span>✓</span>Controle de cashback</li>
+            <li><span>✓</span>WhatsApp Business Oficial</li>
+            <li><span>✓</span>Relatórios de vendas</li>
+          </ul>
+          <a href="https://buy.stripe.com/9B6dRa4hVe1N264aOt0co07" class="btn-ghost plan-link" style="justify-content:center" data-monthly="https://buy.stripe.com/9B6dRa4hVe1N264aOt0co07" data-annual="https://buy.stripe.com/aFa6oI4hV1f18us09P0co0a" target="_blank" rel="noopener">Assinar Crescimento</a>
+        </div>
+
+        <div class="bento-card plan-card plan-popular reveal" style="position:relative;transition-delay:.1s">
+          <div class="plan-badge">Mais popular</div>
+          <div class="plan-icon">🏢</div>
+          <p class="plan-name">Consolidado</p>
+          <p class="plan-limits">3 lojas · 12 vendedores · 3 admins</p>
+          <p class="plan-desc">Perfeito para grupos com mais de uma unidade que precisam de visão comparativa e controle centralizado.</p>
+          <div class="plan-price-block">
+            <span class="plan-price" data-monthly="R$ 749,90" data-annual="R$ 624,91">R$ 749,90</span>
+            <span class="plan-freq">/mês</span>
+            <p class="plan-subtotal">Total anual: R$ 7.499,00</p>
+          </div>
+          <ul class="plan-features">
+            <li><span>✓</span>Tudo do Crescimento</li>
+            <li><span>✓</span>Gestão multi-loja</li>
+            <li><span>✓</span>Visão consolidada entre unidades</li>
+            <li><span>✓</span>Comparativo de performance</li>
+            <li><span>✓</span>Dashboards comparativos</li>
+            <li><span>✓</span>WhatsApp Business Oficial</li>
+            <li><span>✓</span>Relatórios consolidados</li>
+          </ul>
+          <a href="https://buy.stripe.com/4gMeVe15J1f1aCA7Ch0co08" class="btn-primary plan-link" style="justify-content:center" data-monthly="https://buy.stripe.com/4gMeVe15J1f1aCA7Ch0co08" data-annual="https://buy.stripe.com/7sYcN6aGjf5Rh0Y3m10co09" target="_blank" rel="noopener">Assinar Consolidado</a>
+        </div>
+
+        <div class="bento-card plan-card reveal" style="position:relative;transition-delay:.2s">
+          <div class="plan-icon">🌐</div>
+          <p class="plan-name">Rede</p>
+          <p class="plan-limits">10 lojas · 40 vendedores · 10 admins</p>
+          <p class="plan-desc">Estrutura completa para redes varejistas que precisam de BI consolidado e gestão estratégica.</p>
+          <div class="plan-price-block">
+            <span class="plan-price" data-monthly="R$ 2.499,90" data-annual="R$ 2.083,25">R$ 2.499,90</span>
+            <span class="plan-freq">/mês</span>
+            <p class="plan-subtotal">Total anual: R$ 24.999,00</p>
+          </div>
+          <ul class="plan-features">
+            <li><span>✓</span>Tudo do Consolidado</li>
+            <li><span>✓</span>BI consolidado completo</li>
+            <li><span>✓</span>Gestão estratégica de rede</li>
+            <li><span>✓</span>Benchmarking entre lojas</li>
+            <li><span>✓</span>Relatórios executivos</li>
+            <li><span>✓</span>WhatsApp Business Oficial</li>
+            <li><span>✓</span>Suporte prioritário</li>
+          </ul>
+          <a href="https://buy.stripe.com/4gMcN63dR7Dph0Y9Kp0co03" class="btn-ghost plan-link" style="justify-content:center" data-monthly="https://buy.stripe.com/4gMcN63dR7Dph0Y9Kp0co03" data-annual="https://buy.stripe.com/cNieVedSvcXJh0Yf4J0co04" target="_blank" rel="noopener">Assinar Rede</a>
+        </div>
+
+      </div>
+      <p class="reveal" style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:24px;transition-delay:.4s">Todos os planos incluem suporte via WhatsApp e atualizações contínuas da plataforma.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ══ CTA FINAL ═══════════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="inner-sm" style="position:relative;z-index:1">
+      <div class="reveal">
+        <h2 class="cta-title" style="margin-top:0">
+          O mercado não aceita<br>mais <span class="g-purple">amadores.</span>
+        </h2>
+        <p class="cta-sub">Seus concorrentes também não. Comece a usar os dados que você já tem.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:2.5rem">
+          <a href="#planos" class="btn-primary" style="padding:16px 36px;font-size:1.05rem;border-radius:14px">
+            Ver planos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="https://wa.me/554531978214?text=Ol%C3%A1%2C%20gostaria%20de%20falar%20com%20um%20especialista%20MetaF%C3%A1cil" class="btn-ghost" target="_blank" rel="noopener" style="padding:16px 28px;font-size:1.05rem;border-radius:14px;display:inline-flex;align-items:center;gap:10px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Falar com especialista
+          </a>
+          <a href="https://apps.apple.com/br/app/metafácil/id6764147124" class="btn-app" target="_blank" rel="noopener">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            <div><div class="btn-app-sm">DISPONÍVEL NA</div><div class="btn-app-lg">App Store</div></div>
+          </a>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:24px;color:var(--muted);font-size:.85rem">
+          <span>🔒 Dados criptografados</span>
+          <span>🇧🇷 Feito no Brasil</span>
+          <span>⚡ Setup em minutos</span>
+          <span>🎧 Suporte em português</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════════ -->
+  <footer>
+    <div class="inner footer-inner">
+      <div class="footer-logo">
+        <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/45fe7fedd_DiaBrilhanteeEnsolaradoGoogleClassroomCabealho2.png" alt="MetaFácil" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"/>
+        <span style="display:none;font-size:1.1rem;font-weight:700;letter-spacing:-.02em">MetaFácil</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://apps.apple.com/br/app/metafácil/id6764147124" target="_blank" rel="noopener">App Store</a>
+        <a href="./privacy.html">Privacidade</a>
+        <a href="./terms.html">Termos de Uso</a>
+        <a href="mailto:support@metafacil.app">Suporte</a>
+      </div>
+      <p class="footer-copy">© 2025 MetaFácil. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+
+  <script>
+    const noAnim = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ── Sticky nav ──────────────────────────────── */
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 30), { passive: true });
+
+    /* ── Sparkles ────────────────────────────────── */
+    if (!noAnim) {
+      const sc = document.getElementById('sparkleContainer');
+      const colors = ['rgba(124,92,255,.8)', 'rgba(34,197,94,.8)', 'rgba(167,139,250,.8)'];
+      for (let i = 0; i < 28; i++) {
+        const d = document.createElement('div');
+        d.className = 'sparkle-dot';
+        d.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;background:${colors[i%3]};--dur:${2+Math.random()*3}s;--delay:${Math.random()*5}s`;
+        sc.appendChild(d);
+      }
+    }
+
+    /* ── Hero scroll on image ────────────────────── */
+    if (!noAnim) {
+      const hf = document.getElementById('heroFloat');
+      const hs = document.getElementById('hero');
+      let raf;
+      window.addEventListener('scroll', () => {
+        if (!raf) raf = requestAnimationFrame(() => {
+          if (window.scrollY < hs.offsetHeight + 80)
+            hf.style.transform = `translateY(${window.scrollY*.06}px) rotate(-2deg)`;
+          raf = null;
+        });
+      }, { passive: true });
+    }
+
+    /* ── Rotating hero text ──────────────────────── */
+    if (!noAnim) {
+      const el = document.getElementById('heroRotating');
+      const phrases = ['clientes que voltam', 'vendas que se repetem', 'resultados reais'];
+      let idx = 0;
+      setInterval(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-14px)';
+        setTimeout(() => {
+          idx = (idx + 1) % phrases.length;
+          el.textContent = phrases[idx];
+          el.style.transition = 'none';
+          el.style.transform = 'translateY(14px)';
+          void el.getBoundingClientRect();
+          el.style.transition = '';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, 370);
+      }, 2900);
+    }
+
+    /* ── Scroll reveal ───────────────────────────── */
+    const revObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const delay = parseFloat(e.target.style.transitionDelay) || 0;
+          setTimeout(() => e.target.classList.add('visible'), delay * 1000);
+          revObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => revObs.observe(el));
+
+    /* ── Counter animation ───────────────────────── */
+    const cntObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = parseInt(el.dataset.count);
+        const suffix = el.dataset.suffix || '';
+        const fixed = el.dataset.fixed;
+        if (fixed) { el.textContent = fixed; cntObs.unobserve(el); return; }
+        let i = 0; const steps = 60;
+        const tick = setInterval(() => {
+          i++;
+          el.textContent = Math.round(target * i / steps) + suffix;
+          if (i >= steps) { el.textContent = target + suffix; clearInterval(tick); }
+        }, 1400 / steps);
+        cntObs.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
+
+    /* ── WhatsApp animation ──────────────────────── */
+    (function () {
+      const typing = document.getElementById('wappTyping');
+      const msg    = document.getElementById('wappMsg');
+      const check  = document.getElementById('wappCheck');
+      if (!typing || !msg) return;
+      let phase = 0;
+
+      function tick() {
+        if (phase === 0) {
+          typing.style.display = 'flex';
+          msg.style.transition  = 'none';
+          msg.style.opacity     = '0';
+          msg.style.transform   = 'translateY(8px)';
+          check.style.opacity   = '0';
+          phase = 1; setTimeout(tick, 1500);
+        } else if (phase === 1) {
+          typing.style.display  = 'none';
+          msg.style.transition  = 'opacity .35s ease, transform .35s ease';
+          msg.style.opacity     = '1';
+          msg.style.transform   = 'translateY(0)';
+          phase = 2; setTimeout(tick, 900);
+        } else if (phase === 2) {
+          check.style.transition = 'opacity .25s ease';
+          check.style.opacity    = '1';
+          phase = 3; setTimeout(tick, 4000);
+        } else {
+          phase = 0; setTimeout(tick, 300);
+        }
+      }
+
+      if (!noAnim) {
+        const obs = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) { tick(); obs.disconnect(); }
+        }, { threshold: 0.3 });
+        obs.observe(document.getElementById('wappSection'));
+      } else {
+        typing.style.display = 'none';
+        msg.style.opacity = '1';
+        msg.style.transform = 'none';
+        check.style.opacity = '1';
+      }
+    })();
+
+    /* ── Marquee logos ───────────────────────────── */
+    (function () {
+      const logos = [
+        { src: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/e1e9f44bd_Untitleddesign-2.png',            alt: 'Aervl Street Concept',  cls: '',       h: 52 },
+        { src: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/f7c712132_Untitleddesign-5.png',            alt: 'Aervl',                 cls: '',       h: 52 },
+        { src: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/a5cd58486_Designsemnome.png',              alt: 'Design',                cls: '',       h: 36 },
+        { src: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/348abab0b_logo-ciadamagia-03-i9tf3n04c0.png', alt: 'Cia da Magia',        cls: 'invert', h: 36 },
+        { src: 'https://media.base44.com/images/public/697a97b4e1fa042c457d8ac6/2669fbcb4_Untitleddesign11.png',                                                          alt: 'Bahaus',                cls: '',       h: 36 },
+        { src: 'logo-setfit.png',                                                                                                                                          alt: 'Set Fit Suplementos',   cls: '',       h: 64 },
+      ];
+      const track = document.getElementById('marqueeTrack');
+      [...logos, ...logos, ...logos].forEach(l => {
+        const box = document.createElement('div');
+        box.className = 'client-logo-box';
+        box.innerHTML = `<img src="${l.src}" alt="${l.alt}" class="${l.cls}" loading="lazy" style="height:${l.h}px"/>`;
+        track.appendChild(box);
+      });
+    })();
+
+    /* ── Plans toggle ────────────────────────────── */
+    (function () {
+      const btnM = document.getElementById('btnMonthly');
+      const btnA = document.getElementById('btnAnnual');
+      const note = document.getElementById('annualNote');
+
+      function setPeriod(annual) {
+        btnM.classList.toggle('active', !annual);
+        btnA.classList.toggle('active',  annual);
+        note.classList.toggle('visible', annual);
+        document.querySelectorAll('.plan-price').forEach(el => {
+          el.textContent = annual ? el.dataset.annual : el.dataset.monthly;
+        });
+        document.querySelectorAll('.plan-subtotal').forEach(el => {
+          el.style.display = annual ? 'block' : 'none';
+        });
+        document.querySelectorAll('.plan-link').forEach(el => {
+          el.href = annual ? el.dataset.annual : el.dataset.monthly;
+        });
+      }
+
+      btnM.addEventListener('click', () => setPeriod(false));
+      btnA.addEventListener('click', () => setPeriod(true));
+    })();
+
+    /* ── Cashback rotating text ──────────────────── */
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const el = document.getElementById('cashbackRotating');
+      if (!el) return;
+
+      const lines = [
+        'É fidelização real.<br>É recompra garantida.',
+        'É o que faz o cliente lembrar<br>de você — e não do concorrente.',
+        'É o que faz o cliente voltar<br>e continuar comprando de você.',
+      ];
+
+      let idx = 0;
+
+      setInterval(() => {
+        el.style.opacity = '0';
+        setTimeout(() => {
+          idx = (idx + 1) % lines.length;
+          el.innerHTML = lines[idx];
+          el.style.opacity = '1';
+        }, 500);
+      }, 3000);
+    })();
+
+    /* ── Filtros Marca animation ─────────────────── */
+    (function () {
+      const panel    = document.getElementById('filtrosPanel');
+      const fpScroll = document.getElementById('fpScroll');
+      const btn      = document.getElementById('filtrosBtn');
+      const badge    = document.getElementById('filtrosBadge');
+      const selBadge = document.getElementById('fpSelBadge');
+      const applyEl  = document.getElementById('fpApply');
+      const dim      = document.getElementById('filtrosDim');
+      const foundMsg = document.getElementById('filtrosFoundMsg');
+      const countEl  = document.getElementById('filtrosCount');
+      const juliaRow = document.getElementById('filtrosHideJulia');
+      const pedroRow = document.getElementById('filtrosHidePedro');
+      // checkbox elements and rows
+      const checkboxes = [0,1,2,3,4,5].map(i => document.getElementById('fpCb'+i));
+      const brandRows  = document.getElementById('fpBrandList')
+                           ? document.getElementById('fpBrandList').querySelectorAll('.fp-brand-row') : [];
+      if (!panel) return;
+
+      const checkSvg = '<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+      function resetAnim() {
+        panel.classList.remove('open');
+        fpScroll.classList.remove('scrolled');
+        btn.classList.remove('tapped');
+        dim.classList.remove('show');
+        badge.style.display = 'none';
+        selBadge.style.display = 'none';
+        applyEl.classList.remove('active');
+        applyEl.textContent = 'Aplicar filtros';
+        foundMsg.classList.remove('show');
+        countEl.textContent = '341 cliente(s) no total';
+        juliaRow.style.display = '';
+        pedroRow.style.display = '';
+        checkboxes.forEach((cb, i) => {
+          cb.classList.remove('checked');
+          cb.innerHTML = '';
+          brandRows[i] && brandRows[i].classList.remove('checked');
+        });
+      }
+
+      function checkBrand(idx) {
+        if (!checkboxes[idx]) return;
+        checkboxes[idx].classList.add('checked');
+        checkboxes[idx].innerHTML = checkSvg;
+        brandRows[idx] && brandRows[idx].classList.add('checked');
+      }
+
+      function loop() {
+        const t = [];
+        const go = (fn, ms) => t.push(setTimeout(fn, ms));
+
+        resetAnim();
+
+        go(() => btn.classList.add('tapped'), 900);
+        go(() => { btn.classList.remove('tapped'); panel.classList.add('open'); dim.classList.add('show'); }, 1350);
+        go(() => fpScroll.classList.add('scrolled'), 2700);
+        go(() => {
+          checkBrand(0); // Nike
+          selBadge.style.display = '';
+          selBadge.textContent = '1 selecionado';
+          applyEl.classList.add('active');
+          applyEl.textContent = 'Aplicar 1 filtro';
+        }, 3600);
+        go(() => {
+          checkBrand(1); // Adidas
+          selBadge.textContent = '2 selecionados';
+          applyEl.textContent = 'Aplicar 2 filtros';
+        }, 4450);
+        go(() => {
+          panel.classList.remove('open');
+          dim.classList.remove('show');
+          badge.style.display = '';
+        }, 5600);
+        go(() => {
+          foundMsg.classList.add('show');
+          countEl.textContent = '2 cliente(s) no total';
+          juliaRow.style.opacity = '0';
+          pedroRow.style.opacity = '0';
+          setTimeout(() => {
+            juliaRow.style.display = 'none';
+            pedroRow.style.display = 'none';
+          }, 450);
+        }, 6200);
+        go(() => loop(), 10800);
+      }
+
+      if (!noAnim) {
+        const obs = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) { setTimeout(loop, 600); obs.disconnect(); }
+        }, { threshold: 0.3 });
+        obs.observe(document.getElementById('filtrosMarcaSection'));
+      } else {
+        resetAnim();
+      }
+    })();
+
+    /* ── Client card demo animation ─────────────── */
+    (function () {
+      const card      = document.getElementById('demoCard1');
+      const details   = document.getElementById('demoDetails1');
+      const interests = document.getElementById('demoInterests1');
+      const toggle    = document.getElementById('demoToggle1');
+      const listInner = document.getElementById('demoListInner');
+      if (!card || !listInner) return;
+
+      let phase = 0;
+      function tick() {
+        if (phase === 0) {
+          // Reset: bring list back, collapse details
+          listInner.style.transform = 'translateY(0)';
+          card.classList.remove('active');
+          interests.classList.remove('show');
+          setTimeout(() => {
+            details.classList.remove('open');
+            toggle.textContent = '∨ Ver mais detalhes';
+          }, 300);
+          phase = 1; setTimeout(tick, 2200);
+
+        } else if (phase === 1) {
+          // Highlight card
+          card.classList.add('active');
+          phase = 2; setTimeout(tick, 900);
+
+        } else if (phase === 2) {
+          // Expand details — Roberto falls off bottom naturally via overflow:hidden
+          details.classList.add('open');
+          toggle.textContent = '∧ Ocultar detalhes';
+          phase = 3; setTimeout(tick, 1400);
+
+        } else if (phase === 3) {
+          // Show interests + scroll up slightly to reveal them
+          interests.classList.add('show');
+          setTimeout(() => {
+            listInner.style.transform = 'translateY(-80px)';
+          }, 300);
+          phase = 4; setTimeout(tick, 4500);
+
+        } else {
+          phase = 0; setTimeout(tick, 500);
+        }
+      }
+
+      if (!noAnim) {
+        const obs = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) { setTimeout(tick, 600); obs.disconnect(); }
+        }, { threshold: 0.3 });
+        obs.observe(document.getElementById('clientDemoSection'));
+      } else {
+        card.classList.add('active');
+        details.classList.add('open');
+        interests.classList.add('show');
+        listInner.style.transform = 'translateY(-80px)';
+      }
+    })();
+  </script>
+
+</body>
+</html>
