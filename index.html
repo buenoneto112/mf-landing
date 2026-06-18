@@ -554,7 +554,6 @@
 
     .wapp-section { background: var(--bg2); }
     .wapp-layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
-    @media (max-width: 900px) { .wapp-layout { grid-template-columns: 1fr; } }
 
     /* iPhone frame — proporção real ~1:2.16 */
     .iphone-frame {
@@ -741,7 +740,7 @@
 
     /* ════════ CLIENTES ════════════════════════════ */
     .client-logo-box {
-      flex-shrink: 0; width: 192px; height: 88px; border-radius: 16px;
+      flex-shrink: 0; width: 220px; height: 160px; border-radius: 16px;
       background: var(--bg2); border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
       transition: border-color 0.3s, box-shadow 0.3s;
@@ -750,7 +749,7 @@
       border-color: rgba(124,92,255,0.5);
       box-shadow: 0 0 20px rgba(124,92,255,0.15);
     }
-    .client-logo-box img { max-width: 140px; object-fit: contain; display: block; }
+    .client-logo-box img { max-width: 180px; max-height: 140px; object-fit: contain; display: block; width: auto; }
     .client-logo-box img.invert { filter: brightness(0) invert(1); }
 
 
@@ -1111,6 +1110,75 @@
       pointer-events: none;
     }
     .filtros-dim.show { opacity: 1; }
+
+    /* ════════ TWO-COL LAYOUT ════════════════════════ */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem,5vw,4rem);
+      align-items: center;
+    }
+
+    /* ════════ TABLET (≤ 900px) ══════════════════════ */
+    @media (max-width: 900px) {
+      .hero-inner { flex-direction: column; text-align: center; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .hero-trust { justify-content: center; }
+      .hero-right { max-width: 100%; width: 100%; }
+      .float-badge { display: none; }
+      .bento-7, .bento-5, .bento-4 { grid-column: 1 / -1; }
+    }
+
+    /* ════════ MOBILE ════════════════════════════════ */
+    @media (max-width: 768px) {
+      .nav-links, .btn-nav { display: none; }
+
+      /* Manter 2 colunas: evitar que o iPhone expanda a coluna */
+      .two-col > *, .wapp-layout > * { min-width: 0; }
+      .two-col, .wapp-layout { gap: 14px !important; align-items: start !important; }
+
+      /* iPhone: zoom reduz tamanho no layout */
+      .iphone-frame { zoom: 0.72; }
+
+      /* Tipografia */
+      .section-title    { font-size: clamp(1.2rem, 5vw, 2rem); }
+      .section-title-sm { font-size: clamp(1rem, 4vw, 1.6rem); }
+      .cta-title        { font-size: clamp(1.4rem, 6vw, 2.5rem); }
+      .hero-title, .hero-rotating { font-size: clamp(1.8rem, 7.5vw, 3rem) !important; }
+      .bento-lead { font-size: 0.82rem; }
+
+      /* Bento → coluna única */
+      .bento-7, .bento-5, .bento-4, .bento-12 { grid-column: 1 / -1; }
+      .plans-grid { grid-template-columns: 1fr; }
+
+      /* Logos marquee */
+      .client-logo-box { width: 150px; height: 80px; }
+      .client-logo-box img { max-height: 72px; height: auto !important; max-width: 120px; }
+
+      /* Footer */
+      .footer-inner { flex-direction: column; align-items: center; text-align: center; }
+      .footer-links { justify-content: center; }
+
+      .section-pad { padding: clamp(40px, 9vw, 72px) 0; }
+      .inner, .inner-sm { padding-left: 14px; padding-right: 14px; }
+    }
+
+    @media (max-width: 600px) {
+      .iphone-frame { zoom: 0.55; }
+      .two-col, .wapp-layout { gap: 8px !important; }
+    }
+
+    @media (max-width: 480px) {
+      .iphone-frame { zoom: 0.44; }
+      .two-col, .wapp-layout { gap: 4px !important; }
+      .inner, .inner-sm { padding-left: 10px; padding-right: 10px; }
+    }
+
+    @media (max-width: 390px) {
+      .iphone-frame { zoom: 0.39; }
+    }
+
   </style>
 </head>
 <body>
@@ -1216,7 +1284,7 @@
   <section class="wapp-section grid-bg section-pad" style="position:relative;overflow:hidden;">
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,0.09) 0%,transparent 70%);filter:blur(70px);pointer-events:none;z-index:0;"></div>
     <div class="inner" style="position:relative;z-index:1">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:center;">
+      <div class="two-col">
 
         <!-- LEFT: iPhone -->
         <div style="display:flex;justify-content:center;" class="reveal-left">
@@ -1306,7 +1374,7 @@
   <section style="background:var(--bg2);position:relative;overflow:hidden;" class="section-pad" id="clientDemoSection">
     <div style="position:absolute;top:50%;right:0;transform:translateY(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(124,92,255,0.07) 0%,transparent 70%);filter:blur(80px);pointer-events:none;"></div>
     <div class="inner" style="position:relative;z-index:1">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:center;">
+      <div class="two-col">
 
         <!-- Left: description -->
         <div class="reveal-left">
@@ -1446,7 +1514,7 @@
               <!-- App header bar -->
               <div style="padding:4px 14px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:8px">
                 <div style="display:flex;align-items:center;gap:7px">
-                  <svg width="18" height="18" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="lgfm3" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#7C5CFF"/><stop offset="1" stop-color="#22C55E"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#lgfm3)"/><text x="16" y="22" text-anchor="middle" fill="white" font-size="16" font-weight="700">M</text></svg>
+                  <svg width="20" height="20" viewBox="0 0 40 40" fill="none"><defs><linearGradient id="mfLg" x1="0" y1="40" x2="40" y2="0"><stop stop-color="#7C5CFF"/><stop offset="1" stop-color="#22C55E"/></linearGradient></defs><path d="M6 28 C6 28 10 14 16 20 C20 24 20 16 26 12 L34 12 L34 6 L40 6 L40 12 L34 12" stroke="url(#mfLg)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><polyline points="30,6 40,6 40,16" stroke="url(#mfLg)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
                   <span style="color:#fff;font-weight:700;font-size:0.78rem;letter-spacing:-0.01em">meta<span style="color:#22C55E">fácil</span>.app</span>
                 </div>
                 <div style="display:flex;gap:10px">
@@ -1831,7 +1899,7 @@
         </div>
 
         <div class="erp-full-quote reveal" style="transition-delay:.2s">
-          <p>"Você já paga um sistema. Mas ele emite nota fiscal, não traz cliente de volta.<br><strong>ERP é obrigação. CRM é resultado.</strong>"</p>
+          <p>"Você já paga um sistema. Mas ele emite nota fiscal, não traz cliente de volta.<br><strong><span style="color:#EF4444">ERP</span> é obrigação. <span style="color:#22C55E">CRM</span> é resultado.</strong>"</p>
         </div>
       </div>
     </div>
@@ -2140,8 +2208,8 @@
         { src: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/f7c712132_Untitleddesign-5.png',            alt: 'Aervl',                 cls: '',       h: 52 },
         { src: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/a5cd58486_Designsemnome.png',              alt: 'Design',                cls: '',       h: 36 },
         { src: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697a97b4e1fa042c457d8ac6/348abab0b_logo-ciadamagia-03-i9tf3n04c0.png', alt: 'Cia da Magia',        cls: 'invert', h: 36 },
-        { src: 'https://media.base44.com/images/public/697a97b4e1fa042c457d8ac6/2669fbcb4_Untitleddesign11.png',                                                          alt: 'Bahaus',                cls: '',       h: 36 },
-        { src: 'logo-setfit.png',                                                                                                                                          alt: 'Set Fit Suplementos',   cls: '',       h: 64 },
+        { src: 'https://media.base44.com/images/public/697a97b4e1fa042c457d8ac6/2669fbcb4_Untitleddesign11.png',                                                          alt: 'Bahaus',                cls: '',       h: 144 },
+        { src: 'logo-setfit.png',                                                                                                                                          alt: 'Set Fit Suplementos',   cls: '',       h: 256 },
       ];
       const track = document.getElementById('marqueeTrack');
       [...logos, ...logos, ...logos].forEach(l => {
